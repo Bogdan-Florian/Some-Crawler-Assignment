@@ -1,4 +1,4 @@
-class StrategyManager{
+export class StrategyManager{
     constructor(){
         this._strategy = null;
     }
@@ -9,18 +9,6 @@ class StrategyManager{
 
     getStrategy(name){
         return this._strategies.find(strategy => strategy.name === name);
-    }
-
-}
-
-class Strategy {
-    construction(name, handler){
-        this._name = name;
-        this_.handler = handler;
-    }
-
-    executeStrategy(){
-        return this._handler;
     }
 
 }
