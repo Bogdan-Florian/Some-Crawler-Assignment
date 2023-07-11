@@ -4,7 +4,7 @@ import csv from 'csv-parser'
 import Queue from 'bull';
 
 export const app = express();
-const websiteQueue = new Queue('websiteQueue', 'redis://127.0.0.1:6379');
+const websiteQueueProducer = new Queue('websiteQueue', 'redis://127.0.0.1:6379');
 
 app.get('/start', (req, res) => {
     let iterations = 1
@@ -15,9 +15,9 @@ app.get('/start', (req, res) => {
             if(iterations >= iterationsLimit){
                 stream.destroy(); // This stops the read stream
             }
-            websiteQueue.add(row);
-            iterations += 1;
-            
+            console.log(row.domain)
+            websiteQueueProducer.add('website', {rowNumber: iterations, website: row.domain});
+            iterations += 1;        
         })
         .on('end', () => {
             console.log('CSV file successfully processed');
@@ -29,11 +29,3 @@ app.get('/start', (req, res) => {
 })
 
 
-websiteQueue.process(async (job, done) => {
-    try {
-      console.log(`Website: ${job.data.domain}`);
-      done();
-    } catch (err) {
-      done(new Error(`Failed to retrieve website: ${err.message}`));
-    }
-  });
