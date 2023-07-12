@@ -19,7 +19,6 @@ export async function initializeIndex() {
     fs.createReadStream('sample-websites-company-names.csv')
     .pipe(csvParser())
       .on('data', (data, rowNumber) => {
-        data.rowNumber = rowNumber; // add rowNumber to each data object
         results.push(data);
       })
       .on('end', async () => {
@@ -27,7 +26,6 @@ export async function initializeIndex() {
         for (let result of results) {
           await client.index({
             index: 'company-profiles',
-            id: result.rowNumber, // use rowNumber as document ID
             body: result,
           });
         }
@@ -64,3 +62,16 @@ export async function updatePhoneNumber(domain, phoneNumber) {
   });
 }
 
+export async function searchCompanyProfile(domain) {
+  return await client.search({
+    index: 'company-profiles',
+    body: {
+      query: {
+        term: { 'domain.keyword': domain }
+      }
+    }
+  });
+}
+
+
+  

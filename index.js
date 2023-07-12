@@ -8,18 +8,3 @@ app.listen(port, () => {
 });
 
 initializeIndex();
-
-
-
-export const updateCompanyWithRandomPhoneNumber = (phoneNumber) => {
-  const randomPhoneNumber = '11111-1111' // Generate a random phone number
-  
-  // Replace 'Company Name' with the actual company name you want to update
-  updatePhoneNumber('Greater Boston Zen Center', phoneNumber)
-    .then(() => {
-      console.log(`Updated company with random phone number: ${phoneNumber}`);
-    })
-    .catch((error) => {
-      console.error('Error updating company:', error);
-    });
-};
