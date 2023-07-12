@@ -3,9 +3,8 @@ import { Strategy } from "./Strategy.js";
 import cheerio from 'cheerio';
 
 export const findNumberByKeywordsStrategy = new Strategy('number', (...args) => findNumberByKeywords(...args));
-export const findNumberByTagStrategy = new Strategy('number', (...args) => findTargetByTag(...args));
-export const findAddressByTagStrategy = new Strategy('address', (...args) => findTargetByTag(...args));
-export const findSocialMediaByTagStrategy = new Strategy('links', (...args) => findTargetByTag(...args));
+export const findNumberByTagStrategy = new Strategy('number', (...args) => findNumberByTags(...args));
+
 
 
 function findNumberByTags(details) {
