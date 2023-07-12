@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer';
 import Queue from 'bull';
 import { findNumberByTagStrategy } from '../strategy/StrategyImplementations.js';
+import { updatePhoneNumber } from '../persistance/storage.js'
 import cheerio from 'cheerio';
 
 // Define the job queue
@@ -8,12 +9,13 @@ const websiteQueueConsumer = new Queue('websiteQueue', 'redis://127.0.0.1:6379')
 
 websiteQueueConsumer.process('website', async (job, done) => {
   try {
-    console.log(`Fetching Website no.${job.data.rowNumber}: http://${job.data.website}`);
+    console.log(`Fetching Website: http://${job.data.website}`);
 
     const browser = await puppeteer.launch({
         headless: 'new'
     });
     const page = await browser.newPage();
+    page.setDefaultTimeout(3000)
     await page.goto(`http://${job.data.website}`, { waitUntil: 'networkidle0' }); // Wait until page is fully loaded
 
     // Get all links on the page
@@ -42,7 +44,9 @@ websiteQueueConsumer.process('website', async (job, done) => {
       const phoneNumberPattern = `\\d+`;
 
       const phoneNumbersByTag = findNumberByTagStrategy.executeStrategy({ cheerioElements: $, regexExpTarget: phoneNumberPattern });
-      
+      if(phoneNumbersByTag.length > 0 ){
+        updatePhoneNumber(job.data.website, phoneNumbersByTag.join("/"))
+      }
       console.log(`Phone Numbers found by Tag Strategy: ${phoneNumbersByTag}`);
     } else {
       console.log('Contact page not found');
