@@ -65,3 +65,8 @@ How would you store a dataset to allow querying by company name?
 - Another thing that impact the way we store it is how this dataset is going to be queried, e.g term or match
 
 - If scalling on this dataset then our strategies have to take into account how it will impact sharding thus we need to think of how large the dataset will grow. 
+
+*How to run:
+Run npm install, install Redis, Elastic Search. 
+consumer.js needs to be ran separately
+entry point is index.js for main app.*
