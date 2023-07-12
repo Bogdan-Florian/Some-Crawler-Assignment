@@ -2,6 +2,7 @@ import express from 'express'
 import fs from 'fs'
 import csv from 'csv-parser'
 import Queue from 'bull';
+import { searchCompanyProfile } from '../persistance/storage.js'
 
 export const app = express();
 const websiteQueueProducer = new Queue('websiteQueue', 'redis://127.0.0.1:6379');
@@ -29,3 +30,23 @@ app.get('/start', (req, res) => {
 })
 
 
+app.get('/company', async (req, res) => {
+    const { companyDomain } = req.query;
+
+    if (!companyDomain) {
+        return res.status(400).send({ message: 'Both param1 and param2 are required.' });
+    }
+
+    try {
+        searchCompanyProfile(companyDomain).then(searchResult => {
+            if (searchResult.hits.total.value > 0) {
+                return res.status(200).send(searchResult.hits.hits[0]._source);
+            } else {
+                return res.status(400).send({ message: 'No matching records found.' });
+            }
+        });        
+    } catch (error) {
+        console.error('Error performing search:', error);
+        return res.status(500).send({ message: 'Error performing search.' });
+    }
+});
