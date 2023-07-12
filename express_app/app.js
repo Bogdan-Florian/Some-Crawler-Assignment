@@ -16,7 +16,7 @@ app.get('/start', (req, res) => {
                 stream.destroy(); // This stops the read stream
             }
             console.log(row.domain)
-            websiteQueueProducer.add('website', {rowNumber: iterations, website: row.domain});
+            websiteQueueProducer.add('website', {rowNumber: iterations, website: row.domain}, {attempts: 1});
             iterations += 1;        
         })
         .on('end', () => {
